@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RAG Simulator</title>
+
+<style>
+
+body{
+font-family: Arial, sans-serif;
+background:#0f172a;
+color:white;
+margin:0;
+padding:40px;
+}
+
+h1{
+text-align:center;
+margin-bottom:30px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+}
+
+.box{
+background:#1e293b;
+padding:20px;
+margin-bottom:20px;
+border-radius:10px;
+}
+
+button{
+padding:10px 20px;
+border:none;
+border-radius:6px;
+background:#3b82f6;
+color:white;
+cursor:pointer;
+}
+
+button:hover{
+background:#2563eb;
+}
+
+.output{
+margin-top:15px;
+background:#020617;
+padding:15px;
+border-radius:8px;
+min-height:40px;
+}
+
+.chunk{
+background:#334155;
+padding:8px;
+margin:5px;
+border-radius:5px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>RAG Simulator</h1>
+
+<div class="container">
+
+<div class="box">
+<h3>Step 1 — Load Documents</h3>
+<button onclick="loadDocs()">Load Example Docs</button>
+<div id="docs" class="output"></div>
+</div>
+
+<div class="box">
+<h3>Step 2 — Chunk Documents</h3>
+<button onclick="chunkDocs()">Chunk Text</button>
+<div id="chunks" class="output"></div>
+</div>
+
+<div class="box">
+<h3>Step 3 — Create Embeddings</h3>
+<button onclick="embed()">Generate Embeddings</button>
+<div id="embed" class="output"></div>
+</div>
+
+<div class="box">
+<h3>Step 4 — Ask Question</h3>
+<input id="question" placeholder="Ask a question" style="padding:8px;width:60%">
+<button onclick="search()">Search Vector DB</button>
+<div id="search" class="output"></div>
+</div>
+
+<div class="box">
+<h3>Step 5 — Generate Answer</h3>
+<button onclick="generate()">Generate Answer</button>
+<div id="answer" class="output"></div>
+</div>
+
+</div>
+
+<script>
+
+let documents = []
+let chunks = []
+let retrieved = []
+
+function loadDocs(){
+
+documents = [
+"Refund policy allows refund within 30 days.",
+"Shipping usually takes 5 to 7 business days.",
+"Customers can contact support via email."
+]
+
+document.getElementById("docs").innerHTML = documents.join("<br>")
+
+}
+
+function chunkDocs(){
+
+chunks = []
+
+documents.forEach(doc=>{
+doc.split(".").forEach(c=>{
+if(c.trim()!="") chunks.push(c.trim())
+})
+})
+
+let html = ""
+
+chunks.forEach(c=>{
+html += `<div class="chunk">${c}</div>`
+})
+
+document.getElementById("chunks").innerHTML = html
+
+}
+
+function embed(){
+
+let html=""
+
+chunks.forEach(c=>{
+let vector = Array.from({length:4},()=>Math.random().toFixed(2))
+html += `${c} → [${vector}]<br>`
+})
+
+document.getElementById("embed").innerHTML = html
+
+}
+
+function search(){
+
+let q = document.getElementById("question").value
+
+retrieved = chunks.slice(0,2)
+
+document.getElementById("search").innerHTML =
+"Retrieved chunks:<br>" + retrieved.join("<br>")
+
+}
+
+function generate(){
+
+let answer =
+"Based on documents: " + retrieved.join(" ") 
+
+document.getElementById("answer").innerHTML = answer
+
+}
+
+</script>
+
+</body>
+</html>
